@@ -1,0 +1,54 @@
+CREATE DATABASE `projectt` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+
+CREATE TABLE `users` (
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `enabled` bit(1) NOT NULL,
+  PRIMARY KEY (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `authorities` (
+  `username` varchar(50) NOT NULL,
+  `authority` varchar(50) NOT NULL,
+  UNIQUE KEY `authorities4_idx_1` (`username`,`authority`),
+  CONSTRAINT `authorities4_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `user_data` (
+  `username` varchar(50) NOT NULL,
+  `firstname` varchar(50) NOT NULL,
+  `lastname` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  PRIMARY KEY (`username`),
+  CONSTRAINT `user_data_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `account` (
+  `account_nr` varchar(20) NOT NULL,
+  `pin` varchar(4) NOT NULL,
+  `balance` decimal(15,2) NOT NULL,
+  `currency` varchar(3) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  PRIMARY KEY (`account_nr`),
+  UNIQUE KEY `accountNr_UNIQUE` (`account_nr`),
+  KEY `username` (`username`),
+  CONSTRAINT `account_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE `transaction_history` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `from_account` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `to_account` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `amount` decimal(15,2) NOT NULL,
+  `currency` varchar(3) NOT NULL,
+  `date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_from_account` (`from_account`),
+  KEY `fk_to_account` (`to_account`),
+  CONSTRAINT `fk_from_account` FOREIGN KEY (`from_account`) REFERENCES `account` (`account_nr`),
+  CONSTRAINT `fk_to_account` FOREIGN KEY (`to_account`) REFERENCES `account` (`account_nr`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
